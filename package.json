@@ -5,5 +5,8 @@
   "main": "index.js",
   "repository": "git@github.com:BennettStaley/intercypt.git",
   "author": "bennett staley <me@bennettstaley.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "pown-proxy": "^0.0.1"
+  }
 }
