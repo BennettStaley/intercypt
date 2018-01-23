@@ -1,0 +1,5 @@
+.next
+applications/**/migrations/
+node_modules
+coverage
+packages/**/lib

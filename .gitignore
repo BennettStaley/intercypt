@@ -1,2 +1,5 @@
 victims.txt
-sslstrip.log
+**/*.log
+node_modules
+.http*
+.DS_Store
