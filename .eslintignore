@@ -3,3 +3,4 @@ applications/**/migrations/
 node_modules
 coverage
 packages/**/lib
+victims.txt
