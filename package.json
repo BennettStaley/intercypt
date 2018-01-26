@@ -6,6 +6,7 @@
   "author": "bennett staley <me@bennettstaley.com>",
   "license": "MIT",
   "scripts": {
+    "postinstall" : "bash ./scripts/install.sh",
     "attack": "sudo node ./src/spoof.js",
     "listen": "sudo nodemon ./src/proxy.js",
     "gather": "sudo bash ./scripts/gather.sh",
